@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, CheckCircle, Loader2, X, Globe, Award } from "lucide-react";
+import { ArrowRight, CheckCircle, Loader2, X, Globe } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import RevealOnScroll from "./RevealOnScroll";
@@ -24,10 +24,10 @@ const DemoSection: React.FC = () => {
 
   const validateUrls = () => {
     const filledUrls = urls.filter((url) => url.trim() !== "");
-    if (filledUrls.length < 2) {
+    if (filledUrls.length !== 3) {
       toast({
         title: "Error",
-        description: "Please provide at least two URLs for comparison",
+        description: "Please provide exactly three URLs for comparison",
         variant: "destructive",
       });
       return false;
@@ -68,39 +68,17 @@ const DemoSection: React.FC = () => {
     setShowFullReport(false);
 
     try {
+      // Call Route: /process-urls
       const response = await axios.post("http://localhost:5000/process-urls", {
-        urls: urls.filter((url) => url.trim() !== ""),
+        urls: urls,
       });
-
-      const { rankings, suggestions } = response.data;
-
-      // Parse rankings to extract sections and scores
-      const sections = ["Header", "Body", "Footer"];
-      const parsedRankings = sections.map((section) => {
-        const sectionRegex = new RegExp(`Section: ${section.toUpperCase()}\n([\\s\\S]*?)(?=\\n\\nSection:|$)`);
-        const match = rankings.match(sectionRegex);
-        if (!match) return null;
-
-        const lines = match[1].split("\n").filter((line: string) => line.trim());
-        const rankingsData = lines.map((line: string) => {
-          const [, url, match, similarity] = line.match(/(\d)\. (url\d) \(Best Match: ([^,]+), Similarity: ([\d.]+)\)/) || [];
-          const parsedSimilarity = parseFloat(similarity);
-          return { 
-            url, 
-            match, 
-            similarity: isNaN(parsedSimilarity) ? 0 : parsedSimilarity 
-          };
-        });
-
-        return { section, rankings: rankingsData };
-      }).filter(Boolean);
 
       setCompareResults({
-        rankings: parsedRankings,
-        suggestions,
-        rawRankings: rankings,
+        rankings: response.data.rankings,
+        suggestions: response.data.suggestions,
       });
 
+      // Simulate progress
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
@@ -115,7 +93,7 @@ const DemoSection: React.FC = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to analyze websites. The server encountered an issue. Please ensure the backend server is running and try again.",
+        description: "Failed to analyze websites. Please ensure the backend server is running and try again.",
         variant: "destructive",
       });
       setIsAnalyzing(false);
@@ -136,7 +114,7 @@ const DemoSection: React.FC = () => {
   };
 
   const handleGetFullReport = () => {
-    if (!compareResults || !compareResults.rankings) {
+    if (!compareResults || !compareResults.rankings || !compareResults.suggestions) {
       toast({
         title: "Error",
         description: "No analysis data available. Please try comparing websites again.",
@@ -144,7 +122,9 @@ const DemoSection: React.FC = () => {
       });
       return;
     }
+
     setShowFullReport(true);
+
     toast({
       title: "Full Comparison Report Generated",
       description: "Your comprehensive website comparison analysis is ready!",
@@ -258,12 +238,12 @@ const DemoSection: React.FC = () => {
 
                     <div className="bg-gray-800/50 border border-blue-500/20 p-6 rounded-xl mb-10">
                       <h4 className="text-xl font-semibold mb-4 flex items-center text-white">
-                        <Award size={20} className="text-purple-500 mr-2" />
+                        <Globe size={20} className="text-purple-500 mr-2" />
                         Element Rankings by Section
                       </h4>
 
                       <div className="space-y-6">
-                        {compareResults.rawRankings.split("\n\n").map((section: string, idx: number) => {
+                        {compareResults.rankings.split("\n\n").map((section: string, idx: number) => {
                           if (!section.trim()) return null;
                           const lines = section.split("\n");
                           const sectionTitle = lines[0];
@@ -275,7 +255,7 @@ const DemoSection: React.FC = () => {
                               <div className="space-y-3">
                                 {rankings.map((rank: string, rIdx: number) => {
                                   const [, position, url, match, similarity] = rank.match(
-                                    /(\d)\. (url\d) \(Best Match: ([^,]+), Similarity: ([\d.]+)\)/
+                                    /(\d)\. (url\d) \(Best Match: ([^,]+),\s*Similarity: ([\d.]+)\)/
                                   ) || [];
                                   const urlIndex = parseInt(url.replace("url", "")) - 1;
                                   const hostname = urls[urlIndex] ? new URL(urls[urlIndex]).hostname : url;
@@ -339,168 +319,52 @@ const DemoSection: React.FC = () => {
 
                       <div className="mb-10">
                         <h4 className="text-xl font-semibold mb-4 flex items-center text-white">
-                          <Award className="mr-2 text-purple-500" size={22} />
-                          Ultimate Website Recommendations
+                          <Globe className="mr-2 text-purple-500" size={22} />
+                          LLM Suggestions for Best Sections
                         </h4>
 
-                        <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-500/30">
-                          <p className="text-gray-300 mb-6">
-                            Based on our analysis, here’s how to combine the best elements from each website:
-                          </p>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                          {compareResults?.suggestions?.map((suggestion: any, idx: number) => {
+                            const section = suggestion.section_type;
+                            const bestMatch = compareResults.rankings
+                              .split("\n\n")
+                              .find((s: string) => s.includes(`Section: ${section.toUpperCase()}`))
+                              ?.split("\n")[1]
+                              ?.match(/(\d)\. (url\d) \(Best Match: .+,\s*Similarity: ([\d.]+)\)/);
+                            const bestUrl = bestMatch?.[2];
+                            const similarity = bestMatch?.[3];
+                            const urlIndex = bestUrl ? parseInt(bestUrl.replace("url", "")) - 1 : -1;
+                            const hostname = urlIndex >= 0 && urls[urlIndex] ? new URL(urls[urlIndex]).hostname : bestUrl || "Unknown";
 
-                          <div className="space-y-6">
-                            {compareResults.rankings.map((section: any, idx: number) => {
-                              const bestMatch = section.rankings
-                                .filter((rank: any) => typeof rank.similarity === "number" && !isNaN(rank.similarity))
-                                .reduce((prev: any, current: any) =>
-                                  current.similarity > prev.similarity ? current : prev,
-                                  { similarity: -Infinity, url: "unknown" }
-                                );
-                              if (bestMatch.url === "unknown") {
-                                console.error(`No valid similarity scores for section ${section.section}`, section.rankings);
-                                return (
-                                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-                                    <div className="font-semibold text-blue-400 w-32 capitalize">{section.section}:</div>
-                                    <div className="flex items-center gap-3">
-                                      <span className="text-gray-300">No valid data available</span>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              const topUrlIndex = parseInt(bestMatch.url.replace("url", "")) - 1;
-                              const topHostname = urls[topUrlIndex] ? new URL(urls[topUrlIndex]).hostname : bestMatch.url;
-                              const topSimilarity = bestMatch.similarity || "N/A";
-
-                              return (
-                                <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-                                  <div className="font-semibold text-blue-400 w-32 capitalize">{section.section}:</div>
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-gray-300">Take from </span>
-                                    <span className="px-3 py-1 bg-blue-500/20 rounded-md text-white">
-                                      {topHostname}
-                                    </span>
-                                    <span className="text-gray-300">
-                                      (Similarity Score: {topSimilarity})
-                                    </span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-                        {urls
-                          .filter((url) => url.trim() !== "")
-                          .map((url, siteIdx) => {
-                            const hostname = new URL(url).hostname;
-                            const bestSections = compareResults.rankings
-                              .filter((section: any) => {
-                                const bestMatch = section.rankings.reduce((prev, current) =>
-                                  current.similarity > prev.similarity ? current : prev
-                                );
-                                const topUrlIndex = parseInt(bestMatch.url.replace("url", "")) - 1;
-                                return urls[topUrlIndex] === url;
-                              })
-                              .map((section: any) => section.section.toLowerCase());
+                            if (!suggestion || !bestUrl) return null;
 
                             return (
-                              <div key={siteIdx} className="mb-8">
-                                <div className="flex items-center gap-3 mb-4">
-                                  <Globe size={20} className="text-blue-400" />
-                                  <h4 className="text-lg font-semibold text-white">{hostname}</h4>
-                                </div>
-
-                                {bestSections.length > 0 ? (
-                                  <div className="p-4 bg-gray-800/50 rounded-lg border border-blue-500/30">
-                                    <h5 className="text-sm font-semibold mb-3 text-white">LLM Suggestions:</h5>
-                                    <div className="space-y-3">
-                                      {compareResults.suggestions
-                                        .filter(
-                                          (s: any) =>
-                                            s.website_type === "e-commerce" &&
-                                            bestSections.includes(s.section_type.toLowerCase())
-                                        )
-                                        .map((s: any, sIdx: number) => (
-                                          <div key={sIdx} className="p-3 bg-gray-700/30 rounded-lg">
-                                            <h6 className="text-sm font-semibold text-blue-400 capitalize mb-2">
-                                              {s.section_type}
-                                            </h6>
-                                            {s.suggestions && s.suggestions.length > 0 ? (
-                                              <ul className="list-disc list-inside text-sm text-gray-300 space-y-2">
-                                                {s.suggestions.slice(0, 2).map((suggestion: string, idx: number) => (
-                                                  <li key={idx} dangerouslySetInnerHTML={{ __html: suggestion }} />
-                                                ))}
-                                              </ul>
-                                            ) : (
-                                              <p className="text-sm text-gray-400">No suggestions available for this section.</p>
-                                            )}
-                                          </div>
-                                        ))}
-                                    </div>
-                                  </div>
+                              <div key={idx} className="p-4 bg-gray-800/50 rounded-lg border border-blue-500/30">
+                                <h5 className="text-lg font-semibold text-blue-400 capitalize mb-3">
+                                  {section} ({hostname}, Similarity: {similarity})
+                                </h5>
+                                {suggestion.suggestions && suggestion.suggestions.length > 0 ? (
+                                  <ul className="list-disc list-inside text-sm text-gray-300 space-y-2">
+                                    {suggestion.suggestions.map((s: string, sIdx: number) => (
+                                      <li key={sIdx} dangerouslySetInnerHTML={{ __html: s.replace(/^\d+\.\s*/, '') }} />
+                                    ))}
+                                  </ul>
                                 ) : (
-                                  <div className="p-4 bg-gray-800/50 rounded-lg border border-blue-500/30 text-gray-400">
-                                    No top-ranking sections for this website.
-                                  </div>
+                                  <p className="text-sm text-gray-400">No suggestions available for this section.</p>
                                 )}
                               </div>
                             );
                           })}
+                        </div>
                       </div>
 
-                      <div className="mt-8 p-6 bg-gray-800/50 border border-blue-500/30 rounded-xl">
-                        <h4 className="text-xl font-semibold mb-4 text-white">Implementation Plan</h4>
-                        <ol className="list-decimal list-inside space-y-3 text-gray-300">
-                          {compareResults.rankings.map((section: any, idx: number) => {
-                            const bestMatch = section.rankings
-                              .filter((rank: any) => typeof rank.similarity === "number" && !isNaN(rank.similarity))
-                              .reduce((prev: any, current: any) =>
-                                current.similarity > prev.similarity ? current : prev,
-                                { similarity: -Infinity, url: "unknown" }
-                              );
-                            if (bestMatch.url === "unknown") {
-                              console.error(`No valid similarity scores for section ${section.section}`, section.rankings);
-                              return (
-                                <li key={idx}>
-                                  No valid data for {section.section.toLowerCase()}
-                                </li>
-                              );
-                            }
-                            const topUrlIndex = parseInt(bestMatch.url.replace("url", "")) - 1;
-                            const topHostname = urls[topUrlIndex] ? new URL(urls[topUrlIndex]).hostname : bestMatch.url;
-                            const topSimilarity = bestMatch.similarity || "N/A";
-
-                            return (
-                              <li key={idx}>
-                                Use the {section.section.toLowerCase()} from {topHostname} (Similarity Score: {topSimilarity})
-                              </li>
-                            );
-                          })}
-                        </ol>
-                      </div>
-
-                      <div className="flex justify-between mt-10">
+                      <div className="flex justify-center mt-10">
                         <Button
                           variant="outline"
                           className="border-blue-500/50 hover:border-blue-500 text-white bg-transparent hover:bg-blue-500/10 rounded-lg"
                           onClick={() => setShowFullReport(false)}
                         >
                           Back to Summary
-                        </Button>
-
-                        <Button
-                          className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 px-8 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all"
-                          onClick={() => {
-                            toast({
-                              title: "Comparison Report Downloaded",
-                              description: "Your full comparison report has been downloaded as PDF.",
-                              duration: 3000,
-                            });
-                          }}
-                        >
-                          Download PDF Report
                         </Button>
                       </div>
                     </div>
