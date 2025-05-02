@@ -1,0 +1,109 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 223 47% 20%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 261 73% 63%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 224 71% 25%;
+    --input: 217 32.6% 17.5%;
+    --ring: 222 83% 53%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-webvision-darker text-foreground;
+  }
+
+  /* Add styles for scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-webvision-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-webvision-blue/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-webvision-blue/80;
+  }
+}
+
+@layer components {
+  .glow-text {
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+  }
+  
+  .glow-border {
+    box-shadow: 0 0 5px rgba(96, 165, 250, 0.5);
+  }
+  
+  .neon-button {
+    @apply bg-webvision-blue text-white font-medium rounded-lg px-5 py-2.5 relative overflow-hidden 
+           transition-all duration-300 shadow-neon hover:shadow-neon-hover;
+  }
+  
+  .neon-button::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-webvision-purple to-webvision-blue opacity-0 
+           transition-opacity duration-300;
+  }
+  
+  .neon-button:hover::before {
+    @apply opacity-100;
+  }
+  
+  .neon-button span {
+    @apply relative z-10;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-br from-webvision-dark to-webvision-darker border border-webvision-blue/20 shadow-lg;
+  }
+  
+  .reveal {
+    @apply opacity-0 translate-y-8 transition-all duration-700;
+  }
+  
+  .reveal.active {
+    @apply opacity-100 translate-y-0;
+  }
+}
