@@ -22,9 +22,9 @@ model = genai.GenerativeModel("gemini-1.5-pro")
 
 # Configuration
 SECTIONS = ['header', 'body', 'footer']
-INPUT_PATH = r'D:\segmentation\input'
-DATASET_PATH = r'D:\segmentation'
-BEST_IMAGES_PATH = r'D:\segmentation\best_images'
+INPUT_PATH = r'D:/visionary-optimizer/segmentation/input'
+DATASET_PATH = r'D:/visionary-optimizer/segmentation'
+BEST_IMAGES_PATH = r'D:/visionary-optimizer/segmentation/best_images'
 
 # Ensure directories exist
 for section in SECTIONS:
