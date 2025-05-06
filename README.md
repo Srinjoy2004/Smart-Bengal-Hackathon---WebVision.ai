@@ -6,14 +6,19 @@ Developed by **Team The Axios** for the **Smart Bengal Hackathon 2025**, WebVisi
 
 ---
 
+## 📦 Repositories
+
+| Type | Link |
+|------|------|
+| 🔗 Frontend Repo | [WebVisionAI-Frontend](https://github.com/TheAxios/WebVisionAI-Frontend) |
+| 🔗 Backend Repo  | [WebVisionAI-Backend](https://github.com/TheAxios/WebVisionAI-Backend) |
+
+---
 
 ## 📽️ Project Demonstration
 
-- 🎥 **[Project Demo Video](#)**  
-- 📊 **[Pitch Deck](#)**  
-- 🌐 **[Live Demo](#)**  
-
-> *(Links to video, pitch deck, and live demo should be added once available.)*
+- 📊 **[Pitch Video](#)**  
+*(Replace `#` with actual video link when available)*
 
 ---
 
@@ -25,23 +30,34 @@ Developed by **Team The Axios** for the **Smart Bengal Hackathon 2025**, WebVisi
 
 ## 🛠 Tech Stack
 
-- **Vite** – Build Tool  
-- **React** – Frontend Framework  
-- **TypeScript** – Typed JavaScript  
-- **Tailwind CSS** – Utility-first CSS framework  
-- **PostCSS** – CSS post-processing  
-- **ESLint** – Linting tool  
-- **Vercel** – Deployment platform  
+- **Frontend**:  
+  - Vite  
+  - React  
+  - TypeScript  
+  - Tailwind CSS  
+  - PostCSS  
+  - ESLint  
+  - Vercel  
+
+- **Backend**:  
+  - Python  
+  - OpenCV, PIL, Transformers  
+  - Flask  
+  - Jupyter-compatible preprocessing
 
 ---
 
-## 📂 Project Structure (Frontend)
+## 📂 Project Structure
+
+### Frontend – `WebVisionAI-Frontend/`
 
 ```
 WebVisionAI-Frontend/
 ├── public/                   # Static assets (images, favicon, etc.)
 ├── src/                      # React source code
-│   ├── segmentation/         # Utilities for website section segmentation
+│   ├── segmentation/         # Backend code & dataset (Python scripts)
+│   │   ├── main.py           # Main backend file (Flask server)
+│   │   └── dataset/          # Website datasets for segmentation
 │   └── components.json       # Component configurations
 ├── .gitattributes            # Git attributes for file handling
 ├── .gitignore                # Git ignore rules
@@ -58,40 +74,50 @@ WebVisionAI-Frontend/
 └── vite.config.ts            # Vite configuration
 ```
 
+> 🔁 **Note:** The `segmentation/` folder contains Python scripts (`main.py`) and datasets for backend analysis.
+
 ---
 
 ## 🔧 Setup Instructions
 
-1. **Clone the repository:**
+### 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/TheAxios/WebVisionAI-Frontend
-   cd WebVisionAI-Frontend
-   ```
+```bash
+git clone https://github.com/TheAxios/WebVisionAI-Frontend
+cd WebVisionAI-Frontend
+```
 
-2. **Install dependencies:**
+### 2. Backend Setup (Segmentation):
 
-   ```bash
-   npm install
-   ```
+Navigate to the `segmentation/` folder and run the backend server:
 
-3. **Run the development server:**
+```bash
+cd src/segmentation
+python main.py
+```
 
-   ```bash
-   npm run dev
-   ```
+This runs the Flask backend responsible for analysis and screenshot processing.
 
-4. **Open in browser:**
+### 3. Frontend Setup:
 
-   ```
-   http://localhost:5173
-   ```
+In the project root (`WebVisionAI-Frontend/`), install dependencies and start the development server:
 
-5. **For production build:**
+```bash
+npm install
+npm start
+```
 
-   ```bash
-   npm run build
-   ```
+### 4. Open in Browser:
+
+```
+http://localhost:5173
+```
+
+### 5. Production Build:
+
+```bash
+npm run build
+```
 
 ---
 
@@ -115,12 +141,12 @@ WebVisionAI-Frontend/
 
 ## 👨‍💻 Team Members – *Team The Axios*
 
-| Name                    | Branch                            | Degree | Year | University                         | Role         |
-|-------------------------|------------------------------------|--------|------|-------------------------------------|--------------|
-| **Srinjoy Pramanik**    | Computer Science & Engineering     | B.Tech | 3rd  | Netaji Subhash Engineering College | Team Leader  |
-| **Anubhav Dey**         | Computer Science & Business Systems| B.Tech | 3rd  | Netaji Subhash Engineering College | Member       |
-| **Syed Mohammed Musharraf** | Computer Science & Business Systems | B.Tech | 3rd  | Netaji Subhash Engineering College | Member       |
-| **Ayoshi Bose**         | Artificial Intelligence & ML       | B.Tech | 2nd  | Netaji Subhash Engineering College | Member       |
+| Name                         | Branch                              | Degree | Year | University                         | Role        |
+|------------------------------|--------------------------------------|--------|------|-------------------------------------|-------------|
+| **Srinjoy Pramanik**         | Computer Science & Engineering       | B.Tech | 3rd  | Netaji Subhash Engineering College | Team Leader |
+| **Anubhav Dey**              | Computer Science & Business Systems  | B.Tech | 3rd  | Netaji Subhash Engineering College | Member      |
+| **Syed Mohammed Musharraf**  | Computer Science & Business Systems  | B.Tech | 3rd  | Netaji Subhash Engineering College | Member      |
+| **Ayoshi Bose**              | Artificial Intelligence & ML         | B.Tech | 2nd  | Netaji Subhash Engineering College | Member      |
 
 ---
 
@@ -137,7 +163,7 @@ WebVisionAI-Frontend/
 Feel free to reach out for any queries or collaborations!
 
 - 🔗 [GitHub - The Axios](https://github.com/TheAxios)  
-- 📧 Email: [Add contact email here]
+- 📧 Email: *Add team email here*
 
 > Contributions and issue reports are welcome!
 
