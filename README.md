@@ -6,18 +6,10 @@ Developed by **Team The Axios** for the **Smart Bengal Hackathon 2025**, WebVisi
 
 ---
 
-## 📦 Repositories
-
-| Type | Link |
-|------|------|
-| 🔗 Frontend Repo | [WebVisionAI-Frontend](https://github.com/TheAxios/WebVisionAI-Frontend) |
-| 🔗 Backend Repo  | [WebVisionAI-Backend](https://github.com/TheAxios/WebVisionAI-Backend) |
-
----
 
 ## 📽️ Project Demonstration
 
-- 📊 **[Pitch Video](#)**  
+- 📊 **[Pitch Video](https://youtu.be/SJIDJEk_YNI?si=pLcMjdCL5tSI7y80)**  
 *(Replace `#` with actual video link when available)*
 
 ---
@@ -150,20 +142,13 @@ npm run build
 
 ---
 
-## 🎓 Mentor
 
-- **Name:** Abhisek Saha  
-- **Department:** Computer Science & Business Systems  
-- **College:** Netaji Subhash Engineering College
-
----
 
 ## 📫 Contact
 
 Feel free to reach out for any queries or collaborations!
 
-- 🔗 [GitHub - The Axios](https://github.com/TheAxios)  
-- 📧 Email: *Add team email here*
+- 📧 Email: *srinjoypramanik2004@gmail.com*
 
 > Contributions and issue reports are welcome!
 
