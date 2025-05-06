@@ -6,6 +6,9 @@ Developed by **Team The Axios** for the **Smart Bengal Hackathon 2025**, WebVisi
 
 ---
 
+![image](homepage.png)
+
+
 
 ## 📽️ Project Demonstration
 
