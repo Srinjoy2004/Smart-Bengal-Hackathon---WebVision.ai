@@ -95,13 +95,13 @@ In the project root (`WebVisionAI-Frontend/`), install dependencies and start th
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
 ### 4. Open in Browser:
 
 ```
-http://localhost:5173
+http://localhost:8080
 ```
 
 ### 5. Production Build:
